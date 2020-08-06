@@ -24,25 +24,308 @@ window.appViews.view1 = Vue.component("view1", function (resolve, reject) {
           classes: "",
           transitionName: "",
           transitionMode: "",
-          inAnimation: "fadeIn",
+          inAnimation: "",
           outAnimation: "",
           event: null,
-          table1: {
-            name: "table1",
+          http1: {
+            name: "http1",
+            data: {},
+            headers: {},
+            method: "GET",
+            timeout: 0,
+            userName: "",
+            password: "",
+            cache: false,
+            contentType: "application/x-www-form-urlencoded",
+            url: "https://navarroapp.navarronoticias.com:3000/leoarchivo",
+            event: null,
+            response: null,
+            statusCode: null,
+            textStatus: null,
+            request: null,
+            errorThrown: null,
+            execute: function () {
+              $.ajax({
+                url: this.url,
+                processData: false,
+                cache: this.cache,
+                method: this.method,
+                headers: this.headers,
+                timeout: this.timeout,
+                username: this.userName,
+                password: this.password,
+                contentType: this.contentType,
+                data: app._transformHttpRequest(this)
+              })
+              .fail(this.fail_handler)
+              .done(this.done_handler);
+            },
+            setHeader: function (name, value) {
+              this.headers[name] = value;
+            },
+            done_handler: function (response, textStatus, request) {
+              var
+                view = app._getCurrentView(),
+                views = app._getLoadedViews(),
+                frames = app._getLoadedFrames(),
+                dialogs = app._getLoadedDialogs(),
+                self = view.http1;
+              self.response = response;
+              self.textStatus = textStatus;
+              self.statusCode = request.status;
+              self.request = request;
+
+let nav = [];
+for (let i = 0;i<views.view1.http1.response[0].length;i++){
+  let sub = [];
+  for (let it = 0;it<views.view1.http1.response[0][i].items.length;it++){
+  let sub_el={
+      "text": views.view1.http1.response[0][i].items[it].text,
+      "class": views.view1.http1.response[0][i].items[it].class,
+      "icon": views.view1.http1.response[0][i].items[it].icon,
+      "actived": views.view1.http1.response[0][i].items[it].actived,
+      "disabled": views.view1.http1.response[0][i].items[it].actived
+  }
+  sub.push(sub_el);
+  }
+let elemento={
+    "text": views.view1.http1.response[0][i].text,
+    "class": views.view1.http1.response[0][i].class,
+    "icon": views.view1.http1.response[0][i].icon,
+    "items": sub
+}
+nav.push(elemento);
+}
+views.view1.navbar1.items=nav;
+/////-------------------------------
+let opcion="ACTUALIDAD";
+let actualidad = [];
+for (let i = 1;i<views.view1.http1.response.length;i++){
+if (views.view1.http1.response[i].tema==opcion){
+    let elemento={
+    rubro:views.view1.http1.response[i].rubro,
+    tema:views.view1.http1.response[i].tema,
+    head:views.view1.http1.response[i].head,
+    index:views.view1.http1.response[i].id,
+    imagen:views.view1.http1.response[i].imagen,
+    texto:views.view1.http1.response[i].texto,
+    textoext:views.view1.http1.response[i].textoext,
+    aviso:views.view1.http1.response[i].aviso,
+    video:views.view1.http1.response[i].video,
+    }
+actualidad.push(elemento);
+}}
+app.setVar('datos',actualidad);
+
+
+            },
+            fail_handler: function (request, textStatus, errorThrown) {
+              var
+                view = app._getCurrentView(),
+                views = app._getLoadedViews(),
+                frames = app._getLoadedFrames(),
+                dialogs = app._getLoadedDialogs(),
+                self = view.http1;
+              self.request = request;
+              self.textStatus = textStatus;
+              self.errorThrown = errorThrown;
+              self.statusCode = request.status;
+
+
+
+            }
+          },
+          navbar1: {
+            name: "navbar1",
+            classes: "",
+            title: "",
+            size: "xl",
+            position: "fixed-top",
+            navbarStyle: "light",
+            background: "light",
+            brandText: "",
+            brandImageUrl: "./app/images/logonavarro.png",
+            color: "",
+            hidden: false,
+            items: [],
+            item: null,
+            event: null,
+            itemIndex: -1,
+            itemSubindex: -1,
+            itemClickHandler: function (event, item, index, subindex) {
+              var
+                view = app._getCurrentView(),
+                views = app._getLoadedViews(),
+                frames = app._getLoadedFrames(),
+                dialogs = app._getLoadedDialogs(),
+                self = view.navbar1;
+              self.event = event;
+              self.item = item;
+              self.itemIndex = index;
+              self.itemSubindex = subindex;
+              $(".navbar-collapse").collapse("hide");
+let opcion=app.upperCase(views.view1.navbar1.item.text);
+
+let actualidad = [];
+for (let i = 1;i<views.view1.http1.response.length;i++){
+if (views.view1.http1.response[i].tema==opcion){
+    let elemento={
+    rubro:views.view1.http1.response[i].rubro,
+    tema:views.view1.http1.response[i].tema,
+    head:views.view1.http1.response[i].head,
+
+    index:views.view1.http1.response[i].id,
+    imagen:views.view1.http1.response[i].imagen,
+    texto:views.view1.http1.response[i].texto,
+    textoext:views.view1.http1.response[i].textoext,
+    aviso:views.view1.http1.response[i].aviso,
+    video:views.view1.http1.response[i].video,
+    }
+actualidad.push(elemento);
+}}
+app.setVar('datos',actualidad);
+
+views.view1.html1.hidden=false;
+            },
+            brandClickHandler: function (event) {
+              var
+                view = app._getCurrentView(),
+                views = app._getLoadedViews(),
+                frames = app._getLoadedFrames(),
+                dialogs = app._getLoadedDialogs(),
+                self = view.navbar1;
+              self.event = event;
+
+            },
+            toggleClickHandler: function (event) {
+              var
+                view = app._getCurrentView(),
+                views = app._getLoadedViews(),
+                frames = app._getLoadedFrames(),
+                dialogs = app._getLoadedDialogs(),
+                self = view.navbar1;
+              self.event = event;
+
+            },
+            clickHandler: function () {},
+            dblclickHandler: function () {},
+            mouseupHandler: function () {},
+            mousedownHandler: function () {},
+            mousemoveHandler: function () {},
+            mouseenterHandler: function () {},
+            mouseleaveHandler: function () {},
+            contextmenuHandler: function () {}
+          },
+          http1: {
+            name: "http1",
+            data: {},
+            headers: {},
+            method: "GET",
+            timeout: 0,
+            userName: "",
+            password: "",
+            cache: false,
+            contentType: "application/x-www-form-urlencoded",
+            url: "https://navarroapp.navarronoticias.com:3000/leoarchivo",
+            event: null,
+            response: null,
+            statusCode: null,
+            textStatus: null,
+            request: null,
+            errorThrown: null,
+            execute: function () {
+              $.ajax({
+                url: this.url,
+                processData: false,
+                cache: this.cache,
+                method: this.method,
+                headers: this.headers,
+                timeout: this.timeout,
+                username: this.userName,
+                password: this.password,
+                contentType: this.contentType,
+                data: app._transformHttpRequest(this)
+              })
+              .fail(this.fail_handler)
+              .done(this.done_handler);
+            },
+            setHeader: function (name, value) {
+              this.headers[name] = value;
+            },
+            done_handler: function (response, textStatus, request) {
+              var
+                view = app._getCurrentView(),
+                views = app._getLoadedViews(),
+                frames = app._getLoadedFrames(),
+                dialogs = app._getLoadedDialogs(),
+                self = view.http1;
+              self.response = response;
+              self.textStatus = textStatus;
+              self.statusCode = request.status;
+              self.request = request;
+
+let nav = [];
+for (let i = 0;i<views.view1.http1.response[0].length;i++){
+  let sub = [];
+  for (let it = 0;it<views.view1.http1.response[0][i].items.length;it++){
+  let sub_el={
+      "text": views.view1.http1.response[0][i].items[it].text,
+      "class": views.view1.http1.response[0][i].items[it].class,
+      "icon": views.view1.http1.response[0][i].items[it].icon,
+      "actived": views.view1.http1.response[0][i].items[it].actived,
+      "disabled": views.view1.http1.response[0][i].items[it].actived
+  }
+  sub.push(sub_el);
+  }
+let elemento={
+    "text": views.view1.http1.response[0][i].text,
+    "class": views.view1.http1.response[0][i].class,
+    "icon": views.view1.http1.response[0][i].icon,
+    "items": sub
+}
+nav.push(elemento);
+}
+views.view1.navbar1.items=nav;
+/////-------------------------------
+let opcion="ACTUALIDAD";
+let actualidad = [];
+for (let i = 1;i<views.view1.http1.response.length;i++){
+if (views.view1.http1.response[i].tema==opcion){
+    let elemento={
+    rubro:views.view1.http1.response[i].rubro,
+    tema:views.view1.http1.response[i].tema,
+    index:views.view1.http1.response[i].id,
+    imagen:views.view1.http1.response[i].imagen,
+    texto:views.view1.http1.response[i].texto,
+    textoext:views.view1.http1.response[i].textoext,
+    }
+actualidad.push(elemento);
+}}
+app.setVar('datos',actualidad);
+
+            },
+            fail_handler: function (request, textStatus, errorThrown) {
+              var
+                view = app._getCurrentView(),
+                views = app._getLoadedViews(),
+                frames = app._getLoadedFrames(),
+                dialogs = app._getLoadedDialogs(),
+                self = view.http1;
+              self.request = request;
+              self.textStatus = textStatus;
+              self.errorThrown = errorThrown;
+              self.statusCode = request.status;
+
+
+
+            }
+          },
+
+          html1: {
+            name: "html1",
             classes: "",
             title: "",
             hidden: false,
-            striped: false,
-            bordered: true,
-            borderless: false,
-            hover: false,
-            small: false,
-            responsive: true,
-            responsiveBreak: "",
-            tableStyle: "",
-            headerStyle: "",
-            data: [],
-            record: {},
             event: null,
             swipeRightHandler: function (event) {
               var
@@ -50,7 +333,7 @@ window.appViews.view1 = Vue.component("view1", function (resolve, reject) {
                 views = app._getLoadedViews(),
                 frames = app._getLoadedFrames(),
                 dialogs = app._getLoadedDialogs(),
-                self = view.table1;
+                self = view.html1;
               self.event = event;
 
             },
@@ -60,352 +343,10 @@ window.appViews.view1 = Vue.component("view1", function (resolve, reject) {
                 views = app._getLoadedViews(),
                 frames = app._getLoadedFrames(),
                 dialogs = app._getLoadedDialogs(),
-                self = view.table1;
+                self = view.html1;
               self.event = event;
 
             },
-            rowClickHandler: function (event, record, index) {
-              var
-                view = app._getCurrentView(),
-                views = app._getLoadedViews(),
-                frames = app._getLoadedFrames(),
-                dialogs = app._getLoadedDialogs(),
-                self = view.table1;
-              self.event = event;
-              self.index = index;
-              self.record = record;
-              self.record.index = index;
-
-alert(
-  'Pressed row with index: ' + views.view1.table1.record.index
-);
-            },
-            clickHandler: function () {},
-            dblclickHandler: function () {},
-            mouseupHandler: function () {},
-            mousedownHandler: function () {},
-            mousemoveHandler: function () {},
-            mouseenterHandler: function () {},
-            mouseleaveHandler: function () {},
-            contextmenuHandler: function () {}
-          },
-          select1: {
-            name: "select1",
-            value: null,
-            items: ["none", "light", "dark"],
-            itemIndex: 0,
-            size: "sm",
-            classes: "",
-            title: "",
-            placeholder: "",
-            tabIndex: 0,
-            hidden: false,
-            disabled: false,
-            event: null,
-            changeHandler: function (event) {
-              var
-                view = app._getCurrentView(),
-                views = app._getLoadedViews(),
-                frames = app._getLoadedFrames(),
-                dialogs = app._getLoadedDialogs(),
-                self = view.select1;
-              self.event = event;
-              self.itemIndex = self.items.indexOf(event.target.value);
-
-views.view1.table1.headerStyle = views.view1.select1.items[views.view1.select1.itemIndex];
-
-            },
-            blurHandler: function () {},
-            focusHandler: function () {},
-            clickHandler: function () {},
-            dblclickHandler: function () {},
-            mouseupHandler: function () {},
-            mousedownHandler: function () {},
-            mousemoveHandler: function () {},
-            mouseenterHandler: function () {},
-            mouseleaveHandler: function () {},
-            contextmenuHandler: function () {}
-          },
-          select2: {
-            name: "select2",
-            value: null,
-            items: ["none", "dark"],
-            itemIndex: 0,
-            size: "sm",
-            classes: "",
-            title: "",
-            placeholder: "",
-            tabIndex: 0,
-            hidden: false,
-            disabled: false,
-            event: null,
-            changeHandler: function (event) {
-              var
-                view = app._getCurrentView(),
-                views = app._getLoadedViews(),
-                frames = app._getLoadedFrames(),
-                dialogs = app._getLoadedDialogs(),
-                self = view.select2;
-              self.event = event;
-              self.itemIndex = self.items.indexOf(event.target.value);
-
-views.view1.table1.tableStyle = views.view1.select2.items[views.view1.select2.itemIndex];
-
-            },
-            blurHandler: function () {},
-            focusHandler: function () {},
-            clickHandler: function () {},
-            dblclickHandler: function () {},
-            mouseupHandler: function () {},
-            mousedownHandler: function () {},
-            mousemoveHandler: function () {},
-            mouseenterHandler: function () {},
-            mouseleaveHandler: function () {},
-            contextmenuHandler: function () {}
-          },
-          switch1: {
-            name: "switch1",
-            value: true,
-            text: "Table responsive",
-            classes: "",
-            title: "",
-            tabIndex: 0,
-            hidden: false,
-            disabled: false,
-            event: null,
-
-            changeHandler: function (event) {
-              var
-                view = app._getCurrentView(),
-                views = app._getLoadedViews(),
-                frames = app._getLoadedFrames(),
-                dialogs = app._getLoadedDialogs(),
-                self = view.switch1;
-                self.event = event;
-
-
-views.view1.table1.responsive = views.view1.switch1.value;
-
-
-            },
-            blurHandler: function () {},
-            focusHandler: function () {},
-            clickHandler: function () {},
-            dblclickHandler: function () {},
-            mouseupHandler: function () {},
-            mousedownHandler: function () {},
-            mousemoveHandler: function () {},
-            mouseenterHandler: function () {},
-            mouseleaveHandler: function () {},
-            contextmenuHandler: function () {}
-          },
-          switch2: {
-            name: "switch2",
-            value: false,
-            text: "Table small",
-            classes: "",
-            title: "",
-            tabIndex: 0,
-            hidden: false,
-            disabled: false,
-            event: null,
-
-            changeHandler: function (event) {
-              var
-                view = app._getCurrentView(),
-                views = app._getLoadedViews(),
-                frames = app._getLoadedFrames(),
-                dialogs = app._getLoadedDialogs(),
-                self = view.switch2;
-                self.event = event;
-
-
-views.view1.table1.small = views.view1.switch2.value;
-
-
-            },
-            blurHandler: function () {},
-            focusHandler: function () {},
-            clickHandler: function () {},
-            dblclickHandler: function () {},
-            mouseupHandler: function () {},
-            mousedownHandler: function () {},
-            mousemoveHandler: function () {},
-            mouseenterHandler: function () {},
-            mouseleaveHandler: function () {},
-            contextmenuHandler: function () {}
-          },
-          switch3: {
-            name: "switch3",
-            value: false,
-            text: "Borderless",
-            classes: "",
-            title: "",
-            tabIndex: 0,
-            hidden: false,
-            disabled: false,
-            event: null,
-
-            changeHandler: function (event) {
-              var
-                view = app._getCurrentView(),
-                views = app._getLoadedViews(),
-                frames = app._getLoadedFrames(),
-                dialogs = app._getLoadedDialogs(),
-                self = view.switch3;
-                self.event = event;
-
-
-views.view1.table1.borderless = views.view1.switch3.value;
-
-
-            },
-            blurHandler: function () {},
-            focusHandler: function () {},
-            clickHandler: function () {},
-            dblclickHandler: function () {},
-            mouseupHandler: function () {},
-            mousedownHandler: function () {},
-            mousemoveHandler: function () {},
-            mouseenterHandler: function () {},
-            mouseleaveHandler: function () {},
-            contextmenuHandler: function () {}
-          },
-          switch4: {
-            name: "switch4",
-            value: false,
-            text: "Hoverable",
-            classes: "",
-            title: "",
-            tabIndex: 0,
-            hidden: false,
-            disabled: false,
-            event: null,
-
-            changeHandler: function (event) {
-              var
-                view = app._getCurrentView(),
-                views = app._getLoadedViews(),
-                frames = app._getLoadedFrames(),
-                dialogs = app._getLoadedDialogs(),
-                self = view.switch4;
-                self.event = event;
-
-
-views.view1.table1.hover = views.view1.switch4.value;
-
-
-            },
-            blurHandler: function () {},
-            focusHandler: function () {},
-            clickHandler: function () {},
-            dblclickHandler: function () {},
-            mouseupHandler: function () {},
-            mousedownHandler: function () {},
-            mousemoveHandler: function () {},
-            mouseenterHandler: function () {},
-            mouseleaveHandler: function () {},
-            contextmenuHandler: function () {}
-          },
-          switch5: {
-            name: "switch5",
-            value: false,
-            text: "Striped",
-            classes: "",
-            title: "",
-            tabIndex: 0,
-            hidden: false,
-            disabled: false,
-            event: null,
-
-            changeHandler: function (event) {
-              var
-                view = app._getCurrentView(),
-                views = app._getLoadedViews(),
-                frames = app._getLoadedFrames(),
-                dialogs = app._getLoadedDialogs(),
-                self = view.switch5;
-                self.event = event;
-
-
-views.view1.table1.striped = views.view1.switch5.value;
-
-
-            },
-            blurHandler: function () {},
-            focusHandler: function () {},
-            clickHandler: function () {},
-            dblclickHandler: function () {},
-            mouseupHandler: function () {},
-            mousedownHandler: function () {},
-            mousemoveHandler: function () {},
-            mouseenterHandler: function () {},
-            mouseleaveHandler: function () {},
-            contextmenuHandler: function () {}
-          },
-          switch6: {
-            name: "switch6",
-            value: true,
-            text: "Bordered",
-            classes: "",
-            title: "",
-            tabIndex: 0,
-            hidden: false,
-            disabled: false,
-            event: null,
-
-            changeHandler: function (event) {
-              var
-                view = app._getCurrentView(),
-                views = app._getLoadedViews(),
-                frames = app._getLoadedFrames(),
-                dialogs = app._getLoadedDialogs(),
-                self = view.switch6;
-                self.event = event;
-
-
-views.view1.table1.bordered = views.view1.switch6.value;
-
-
-            },
-            blurHandler: function () {},
-            focusHandler: function () {},
-            clickHandler: function () {},
-            dblclickHandler: function () {},
-            mouseupHandler: function () {},
-            mousedownHandler: function () {},
-            mousemoveHandler: function () {},
-            mouseenterHandler: function () {},
-            mouseleaveHandler: function () {},
-            contextmenuHandler: function () {}
-          },
-          switch6: {
-            name: "switch6",
-            value: true,
-            text: "Bordered",
-            classes: "",
-            title: "",
-            tabIndex: 0,
-            hidden: false,
-            disabled: false,
-            event: null,
-
-            changeHandler: function (event) {
-              var
-                view = app._getCurrentView(),
-                views = app._getLoadedViews(),
-                frames = app._getLoadedFrames(),
-                dialogs = app._getLoadedDialogs(),
-                self = view.switch6;
-                self.event = event;
-
-
-views.view1.table1.bordered = views.view1.switch6.value;
-
-
-            },
-            blurHandler: function () {},
-            focusHandler: function () {},
             clickHandler: function () {},
             dblclickHandler: function () {},
             mouseupHandler: function () {},
@@ -426,16 +367,13 @@ views.view1.table1.bordered = views.view1.switch6.value;
           dialogs = app._getLoadedDialogs();
         view.event = null;
         app._setViewEvents(this);
+app.setVar('datos',[
+{    "id":" ","imagen": " ",
+    "texto": " ",
+}
+]);
+views.view1.http1.execute();
 
-views.view1.table1.data = [
-
-  {name: 'Peter', sport: 'Tennis', phone: 8798261},
-  {name: 'Danny', sport: 'Futbol', phone: 5673436},
-  {name: 'David', sport: 'Basket', phone: 3729642},
-  {name: 'Samuel', sport: 'Golf', phone: 9382791},
-  {name: 'Marcos', sport: 'Cars', phone: 2716391},
-
-];
       },
       deactivated: function () {
         var
@@ -445,7 +383,9 @@ views.view1.table1.data = [
           frames = app._getLoadedFrames(),
           dialogs = app._getLoadedDialogs();
         view.event = null;
-
+app.setVar('datos',[
+{"nombre":"hide","edad":1}
+]);
       },
       methods: {
         clickHandler: function (event) {
@@ -601,16 +541,16 @@ window.app = new Vue({
       error: null,
 
       
-      id: "com.decsoft.table",
+      id: "com.navarronoticias.app",
       version: "1.0.0",
-      name: "Table",
-      shortName: "Table",
-      description: "Another DecSoft App Builder app",
+      name: "Navarro Noticias",
+      shortName: "NavarroApp",
+      description: "Navarro Noticias App",
       authorName: "DecSoft App Builder",
       authorEmail: "DecSoft App Builder",
       authorUrl: "https://www.davidesperalta.com/",
-      language: "en",
-      languageName: "English",
+      language: "es",
+      languageName: "Spanish",
       textDirection: "ltr",
       style: "scaled",
       buildNumber: 0,
@@ -634,7 +574,7 @@ window.app = new Vue({
         lastSound: null,
         activeDialog: null,
         dabdialogs: [],
-        defaultLanguage: "en",
+        defaultLanguage: "es",
       },
     };
   },

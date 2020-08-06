@@ -7,16 +7,26 @@
 
 window.appLangs = [];
 
-window.appLangs["en"] = {
+window.appLangs["es"] = {
 
   language: {
-    name: "English"
+    name: "Spanish"
   },
 
   resources: {
+    vermas: function(id){
+if(id=="mas"){
+document.getElementById("desplegar").style.display="block";
+document.getElementById("mas").style.display="none";
+}
+else{
+document.getElementById("desplegar").style.display="none";
+document.getElementById("mas").style.display="inline";
+}
+}
   },
   sidebar: {
     items: []
   }
 };
-// End of window.appLangs["en"] = {
+// End of window.appLangs["es"] = {
